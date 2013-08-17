@@ -41,6 +41,11 @@ type TestStruct struct {
 	NoJson        string `elastic:"type:string"`
 	unexported    string
 	JsonOmitEmpty string `json:"jsonOmitEmpty,omitempty" elastic:"type:string"`
+	Embedded
+}
+
+type Embedded struct {
+	EmbeddedField string `json:"embeddedField" elastic:"type:string"`
 }
 
 func TestPutMapping(t *testing.T) {
@@ -57,6 +62,7 @@ func TestPutMapping(t *testing.T) {
 				"number":        {"type": "integer", "index": "analyzed"},
 				"NoJson":        {"type": "string"},
 				"jsonOmitEmpty": {"type": "string"},
+				"embeddedField": {"type": "string"},
 			},
 		},
 	}
