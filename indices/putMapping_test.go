@@ -34,12 +34,13 @@ func teardown() {
 }
 
 type TestStruct struct {
-	Id         string `json:"id" elastic:"index:not_analyzed"`
-	DontIndex  string `json:"dontIndex" elastic:"index:no"`
-	Number     int    `json:"number" elastic:"type:integer,index:analyzed"`
-	Omitted    string `json:"-"`
-	NoJson     string `elastic:"type:string"`
-	unexported string
+	Id            string `json:"id" elastic:"index:not_analyzed"`
+	DontIndex     string `json:"dontIndex" elastic:"index:no"`
+	Number        int    `json:"number" elastic:"type:integer,index:analyzed"`
+	Omitted       string `json:"-"`
+	NoJson        string `elastic:"type:string"`
+	unexported    string
+	JsonOmitEmpty string `json:"jsonOmitEmpty,omitempty" elastic:"type:string"`
 }
 
 func TestPutMapping(t *testing.T) {
@@ -51,10 +52,11 @@ func TestPutMapping(t *testing.T) {
 		"myType": MappingOptions{
 			Timestamp: TimestampOptions{Enabled: true},
 			Properties: map[string]map[string]string{
-				"id":        {"index": "not_analyzed"},
-				"dontIndex": {"index": "no"},
-				"number":    {"type": "integer", "index": "analyzed"},
-				"NoJson":    {"type": "string"},
+				"id":            {"index": "not_analyzed"},
+				"dontIndex":     {"index": "no"},
+				"number":        {"type": "integer", "index": "analyzed"},
+				"NoJson":        {"type": "string"},
+				"jsonOmitEmpty": {"type": "string"},
 			},
 		},
 	}

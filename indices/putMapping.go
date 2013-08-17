@@ -42,7 +42,7 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 	for i := 0; i < n; i++ {
 		field := instanceType.Field(i)
 
-		name := field.Tag.Get("json")
+		name := strings.Split(field.Tag.Get("json"), ",")[0]
 		if name == "-" {
 			continue
 		} else if name == "" {
