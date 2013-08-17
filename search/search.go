@@ -14,8 +14,8 @@ package search
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mattbaird/elastigo/api"
-	"github.com/mattbaird/elastigo/core"
+	"github.com/sourcegraph/elastigo/api"
+	"github.com/sourcegraph/elastigo/core"
 	"log"
 	"net/url"
 	"strings"

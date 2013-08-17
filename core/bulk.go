@@ -17,7 +17,7 @@ import (
 	"errors"
 	"fmt"
 	u "github.com/araddon/gou"
-	"github.com/mattbaird/elastigo/api"
+	"github.com/sourcegraph/elastigo/api"
 	"io"
 	"log"
 	"strconv"

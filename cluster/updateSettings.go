@@ -15,7 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mattbaird/elastigo/api"
+	"github.com/sourcegraph/elastigo/api"
 )
 
 // UpdateSettings allows to update cluster wide specific settings. Defaults to Transient setting

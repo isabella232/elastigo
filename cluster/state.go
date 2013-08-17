@@ -13,7 +13,7 @@ package cluster
 
 import (
 	"encoding/json"
-	"github.com/mattbaird/elastigo/api"
+	"github.com/sourcegraph/elastigo/api"
 	"net/url"
 	"strconv"
 	"strings"
