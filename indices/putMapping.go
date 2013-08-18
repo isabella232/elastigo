@@ -47,7 +47,7 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 	}
 
 	opt.Properties = make(map[string]map[string]string)
-	getProperties(instanceType, opt.Properties)
+	GetProperties(instanceType, opt.Properties)
 
 	body, err := json.Marshal(MappingForType(typeName, opt))
 	if err != nil {
