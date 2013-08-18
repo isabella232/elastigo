@@ -52,10 +52,14 @@ func TestPutMapping(t *testing.T) {
 	setup(t)
 	defer teardown()
 
-	options := MappingOptions{Timestamp: TimestampOptions{Enabled: true}}
+	options := MappingOptions{
+		Timestamp: TimestampOptions{Enabled: true},
+		Id:        IdOptions{Index: "analyzed", Path: "id"},
+	}
 	expValue := map[string]MappingOptions{
 		"myType": MappingOptions{
 			Timestamp: TimestampOptions{Enabled: true},
+			Id:        IdOptions{Index: "analyzed", Path: "id"},
 			Properties: map[string]map[string]string{
 				"id":            {"index": "not_analyzed"},
 				"dontIndex":     {"index": "no"},

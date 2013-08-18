@@ -21,11 +21,17 @@ import (
 
 type MappingOptions struct {
 	Timestamp  TimestampOptions             `json:"_timestamp"`
+	Id         IdOptions                    `json:"_id"`
 	Properties map[string]map[string]string `json:"properties"`
 }
 
 type TimestampOptions struct {
 	Enabled bool `json:"enabled"`
+}
+
+type IdOptions struct {
+	Index string `'json:"index"`
+	Path  string `json:"path"`
 }
 
 func PutMapping(index string, typeName string, instance interface{}, opt MappingOptions) error {
