@@ -55,7 +55,7 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 	}
 
 	opt.Properties = make(map[string]map[string]string)
-	GetProperties(instanceType, opt.Properties)
+	getProperties(instanceType, opt.Properties)
 
 	body, err := json.Marshal(MappingForType(typeName, opt))
 	if err != nil {
@@ -70,7 +70,7 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 	return nil
 }
 
-func GetProperties(t reflect.Type, prop map[string]map[string]string) {
+func getProperties(t reflect.Type, prop map[string]map[string]string) {
 	n := t.NumField()
 	for i := 0; i < n; i++ {
 		field := t.Field(i)
@@ -86,7 +86,7 @@ func GetProperties(t reflect.Type, prop map[string]map[string]string) {
 		tag := field.Tag.Get("elastic")
 		if tag == "" {
 			if field.Anonymous && field.Type.Kind() == reflect.Struct {
-				GetProperties(field.Type, prop)
+				getProperties(field.Type, prop)
 			}
 			continue
 		}
