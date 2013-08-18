@@ -36,6 +36,14 @@ type IdOptions struct {
 	Path  string `json:"path"`
 }
 
+func (m_ Mapping) Options() MappingOptions {
+	m := map[string]MappingOptions(m_)
+	for _, v := range m {
+		return v
+	}
+	panic(fmt.Errorf("Malformed input: %v", m_))
+}
+
 func MappingForType(typeName string, opts MappingOptions) Mapping {
 	return map[string]MappingOptions{typeName: opts}
 }
