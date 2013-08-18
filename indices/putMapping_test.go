@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"reflect"
 	"strings"
 	"testing"
 )
@@ -42,6 +41,7 @@ type TestStruct struct {
 	unexported    string
 	JsonOmitEmpty string `json:"jsonOmitEmpty,omitempty" elastic:"type:string"`
 	Embedded
+	MultiAnalyze string `json:"multi_analyze"`
 }
 
 type Embedded struct {
@@ -55,17 +55,34 @@ func TestPutMapping(t *testing.T) {
 	options := MappingOptions{
 		Timestamp: TimestampOptions{Enabled: true},
 		Id:        IdOptions{Index: "analyzed", Path: "id"},
+		Properties: map[string]interface{}{
+			// special properties that can't be expressed as tags
+			"multi_analyze": map[string]interface{}{
+				"type": "multi_field",
+				"fields": map[string]map[string]string{
+					"ma_analyzed":   {"type": "string", "index": "analyzed"},
+					"ma_unanalyzed": {"type": "string", "index": "un_analyzed"},
+				},
+			},
+		},
 	}
 	expValue := MappingForType("myType", MappingOptions{
 		Timestamp: TimestampOptions{Enabled: true},
 		Id:        IdOptions{Index: "analyzed", Path: "id"},
-		Properties: map[string]map[string]string{
-			"id":            {"index": "not_analyzed"},
-			"dontIndex":     {"index": "no"},
-			"number":        {"type": "integer", "index": "analyzed"},
-			"NoJson":        {"type": "string"},
-			"jsonOmitEmpty": {"type": "string"},
-			"embeddedField": {"type": "string"},
+		Properties: map[string]interface{}{
+			"NoJson":        map[string]string{"type": "string"},
+			"dontIndex":     map[string]string{"index": "no"},
+			"embeddedField": map[string]string{"type": "string"},
+			"id":            map[string]string{"index": "not_analyzed"},
+			"jsonOmitEmpty": map[string]string{"type": "string"},
+			"number":        map[string]string{"index": "analyzed", "type": "integer"},
+			"multi_analyze": map[string]interface{}{
+				"type": "multi_field",
+				"fields": map[string]map[string]string{
+					"ma_analyzed":   {"type": "string", "index": "analyzed"},
+					"ma_unanalyzed": {"type": "string", "index": "un_analyzed"},
+				},
+			},
 		},
 	})
 
@@ -73,8 +90,11 @@ func TestPutMapping(t *testing.T) {
 		var value Mapping
 		json.NewDecoder(r.Body).Decode(&value)
 
-		if !reflect.DeepEqual(expValue, value) {
-			t.Errorf("Expected: %+v, but got: %+v", expValue, value)
+		expValJson, _ := json.MarshalIndent(expValue, "", "  ")
+		valJson, _ := json.MarshalIndent(value, "", "  ")
+
+		if string(expValJson) != string(valJson) {
+			t.Errorf("Expected %s but got %s", string(expValJson), string(valJson))
 		}
 	})
 

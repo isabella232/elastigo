@@ -22,9 +22,9 @@ import (
 type Mapping map[string]MappingOptions
 
 type MappingOptions struct {
-	Timestamp  TimestampOptions             `json:"_timestamp"`
-	Id         IdOptions                    `json:"_id"`
-	Properties map[string]map[string]string `json:"properties"`
+	Timestamp  TimestampOptions       `json:"_timestamp"`
+	Id         IdOptions              `json:"_id"`
+	Properties map[string]interface{} `json:"properties"`
 }
 
 type TimestampOptions struct {
@@ -54,7 +54,9 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 		return fmt.Errorf("instance kind was not struct")
 	}
 
-	opt.Properties = make(map[string]map[string]string)
+	if opt.Properties == nil {
+		opt.Properties = make(map[string]interface{})
+	}
 	getProperties(instanceType, opt.Properties)
 
 	body, err := json.Marshal(MappingForType(typeName, opt))
@@ -70,7 +72,7 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 	return nil
 }
 
-func getProperties(t reflect.Type, prop map[string]map[string]string) {
+func getProperties(t reflect.Type, prop map[string]interface{}) {
 	n := t.NumField()
 	for i := 0; i < n; i++ {
 		field := t.Field(i)
