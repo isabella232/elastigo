@@ -19,6 +19,8 @@ import (
 	"strings"
 )
 
+type Mapping map[string]MappingOptions
+
 type MappingOptions struct {
 	Timestamp  TimestampOptions             `json:"_timestamp"`
 	Id         IdOptions                    `json:"_id"`
@@ -34,6 +36,10 @@ type IdOptions struct {
 	Path  string `json:"path"`
 }
 
+func MappingForType(typeName string, opts MappingOptions) Mapping {
+	return map[string]MappingOptions{typeName: opts}
+}
+
 func PutMapping(index string, typeName string, instance interface{}, opt MappingOptions) error {
 	instanceType := reflect.TypeOf(instance)
 	if instanceType.Kind() != reflect.Struct {
@@ -43,7 +49,7 @@ func PutMapping(index string, typeName string, instance interface{}, opt Mapping
 	opt.Properties = make(map[string]map[string]string)
 	getProperties(instanceType, opt.Properties)
 
-	body, err := json.Marshal(map[string]MappingOptions{typeName: opt})
+	body, err := json.Marshal(MappingForType(typeName, opt))
 	if err != nil {
 		return err
 	}

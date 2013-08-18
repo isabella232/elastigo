@@ -56,23 +56,21 @@ func TestPutMapping(t *testing.T) {
 		Timestamp: TimestampOptions{Enabled: true},
 		Id:        IdOptions{Index: "analyzed", Path: "id"},
 	}
-	expValue := map[string]MappingOptions{
-		"myType": MappingOptions{
-			Timestamp: TimestampOptions{Enabled: true},
-			Id:        IdOptions{Index: "analyzed", Path: "id"},
-			Properties: map[string]map[string]string{
-				"id":            {"index": "not_analyzed"},
-				"dontIndex":     {"index": "no"},
-				"number":        {"type": "integer", "index": "analyzed"},
-				"NoJson":        {"type": "string"},
-				"jsonOmitEmpty": {"type": "string"},
-				"embeddedField": {"type": "string"},
-			},
+	expValue := MappingForType("myType", MappingOptions{
+		Timestamp: TimestampOptions{Enabled: true},
+		Id:        IdOptions{Index: "analyzed", Path: "id"},
+		Properties: map[string]map[string]string{
+			"id":            {"index": "not_analyzed"},
+			"dontIndex":     {"index": "no"},
+			"number":        {"type": "integer", "index": "analyzed"},
+			"NoJson":        {"type": "string"},
+			"jsonOmitEmpty": {"type": "string"},
+			"embeddedField": {"type": "string"},
 		},
-	}
+	})
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		var value map[string]MappingOptions
+		var value Mapping
 		json.NewDecoder(r.Body).Decode(&value)
 
 		if !reflect.DeepEqual(expValue, value) {
