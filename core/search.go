@@ -17,6 +17,7 @@ import (
 	"github.com/sourcegraph/elastigo/api"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -148,9 +149,21 @@ type Hit struct {
 }
 
 type Explanation struct {
-	Value       float32       `json:"value"`
-	Description string        `json:"description"`
-	Details     []Explanation `json:"details,omitempty"`
+	Value       float32        `json:"value"`
+	Description string         `json:"description"`
+	Details     []*Explanation `json:"details,omitempty"`
+}
+
+func (e *Explanation) String(indent string) string {
+	if len(e.Details) == 0 {
+		return fmt.Sprintf("%s>>>  %v = %s", indent, e.Value, strings.Replace(e.Description, "\n", "", -1))
+	} else {
+		detailStrs := make([]string, 0)
+		for _, detail := range e.Details {
+			detailStrs = append(detailStrs, fmt.Sprintf("%s", detail.String(indent+"| ")))
+		}
+		return fmt.Sprintf("%s%v = %s(\n%s\n%s)", indent, e.Value, strings.Replace(e.Description, "\n", "", -1), strings.Join(detailStrs, "\n"), indent)
+	}
 }
 
 // Elasticsearch returns some invalid (according to go) json, with floats having...
